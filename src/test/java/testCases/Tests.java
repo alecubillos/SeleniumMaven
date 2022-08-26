@@ -19,8 +19,6 @@ import org.testng.annotations.Test;
 import utils.BrowserManager;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertFalse;
 
@@ -34,7 +32,7 @@ public class Tests {
         driver = BrowserManager.getDriver("chrome", baseUrl);
     }
 
-    @Test
+    @Test(priority = 1)
     //@Parameters({"browser", "url"})
     public void verifyImageLoaded(){
         HomePage homePage = PageFactory.initElements(driver, HomePage.class);
@@ -46,7 +44,7 @@ public class Tests {
         boolean imagePresent = image.isDisplayed();
         Assert.isTrue(imagePresent, "The image was not loaded");
     }
-    @Test
+    @Test(priority = 2)
     public void verifyFirstName() {
         HomePage homePage = PageFactory.initElements(driver, HomePage.class);
         homePage.ClickOthersBtn();
@@ -57,7 +55,7 @@ public class Tests {
         Reporter.log("The First Name displayed is: "+firstName, true);
         assertFalse(firstName.isEmpty());
     }
-    @Test
+    @Test(priority = 2)
     public void verifyLastName() {
         HomePage homePage = PageFactory.initElements(driver, HomePage.class);
         homePage.ClickOthersBtn();
@@ -82,7 +80,7 @@ public class Tests {
         };
     }
 
-    @Test(dataProvider = "test-message")
+    @Test(dataProvider = "test-message", priority = 3)
     public void simpleFormWText(String inputMessage){
         HomePage homePage = PageFactory.initElements(driver, HomePage.class);
         homePage.ClickInputFormsBtn();
@@ -111,12 +109,16 @@ public class Tests {
         };
     }
 
-    @Test(dataProvider = "test-sum-numbers-letters")
-    public void simpleFormWNumbers(String number1, String number2) throws IOException {
+    @Test(dataProvider = "test-sum-numbers-letters", priority = 3)
+    public void simpleFormWNumbers(String number1, String number2) {
         driver.get(baseUrl);
         HomePage homePage = PageFactory.initElements(driver, HomePage.class);
         homePage.ClickInputFormsBtn();
         homePage.ClickSimpleFormDemoLink();
+        Common common = PageFactory.initElements(driver, Common.class);
+        if(common.isElementPresent(By.cssSelector("[title='Close']"))==true){
+            common.clickClosePopUp();
+        }
         BasicFirstFormPage firstFormPage = PageFactory.initElements(driver, BasicFirstFormPage.class);
         String totalDisplayed = firstFormPage.viewSum(number1, number2);
         Reporter.log("total displayed is: "+ totalDisplayed, true);
